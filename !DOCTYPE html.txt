@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Challenges To-Do</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      font-family: "Poppins", sans-serif;
+      padding: 20px;
+      margin: 0;
+      color: white;
+    }
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    h2 {
+      margin-top: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid white;
+      padding-bottom: 5px;
+    }
+    .task {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .task input {
+      margin-right: 10px;
+    }
+    .send-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #4CAF50;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    .send-btn:hover {
+      background: #3e8e41;
+    }
+    .send-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    .name-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+    .day-label {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .link-btn {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .progress-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-table th,
+    .progress-table td {
+      padding: 6px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.3);
+      font-size: 10px;
+    }
+    .progress-table th {
+      background: rgba(255,255,255,0.2);
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+    }
+    .progress-table td.task-name {
+      text-align: left;
+      font-weight: bold;
+      background: rgba(255,255,255,0.15);
+      max-width: 180px;
+      word-wrap: break-word;
+      font-size: 11px;
+    }
+    .star {
+      color: #FFD700;
+      font-size: 14px;
+    }
+    .no-star {
+      color: #666;
+      font-size: 14px;
+    }
+    .category-header {
+      background: rgba(255,255,255,0.3) !important;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .table-container {
+      overflow-x: auto;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .challenge-complete {
+      text-align: center;
+      background: rgba(76, 175, 80, 0.3);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+    .challenge-complete h2 {
+      color: #4CAF50;
+      border: none;
+      margin: 0;
+    }
+    .disabled-message {
+      text-align: center;
+      background: rgba(244, 67, 54, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="todoPage">
+    <h1>🌅🌙 30-Day Daily Challenges</h1>
+    <div id="dayLabel" class="day-label">Day 1</div>
+    
+    <div id="challengeStatus"></div>
+    
+    <input type="text" id="userName" class="name-input" placeholder="Enter your name">
+    
+    <!-- Morning -->
+    <h2>🌅 Morning Challenges</h2>
+    <div class="task" data-category="morning"><input type="checkbox"> Wake up before 5 am</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Drink ginger, lemon, and honey water</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Tratak/Prayer</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Singing</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Breathing exercise</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Meditation</div>
+    <div class="task" data-category="morning"><input type="checkbox"> Start following to-do list</div>
+    
+    <!-- Evening -->
+    <h2>🌙 Evening Reflection</h2>
+    <div class="task" data-category="evening"><input type="checkbox"> Eating before 7 pm</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Present stage empowerment</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Future goal empowerment</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Recalling wasted time & lost opportunities</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Recalling productive time & achievements</div>
+    <div class="task" data-category="evening"><input type="checkbox"> What if wasted time was used productively?</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Recalling whom you hurt today & apologizing in mind</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Recalling who helped you today & thanking them</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Reading 2 pages</div>
+    <div class="task" data-category="evening"><input type="checkbox"> Checking today's to-do & writing tomorrow's</div>
+    
+    <!-- Hidden Form -->
+    <form id="todoForm" action="https://formspree.io/f/mvgqjpvb" method="POST">
+      <input type="hidden" name="name" id="hiddenName">
+      <input type="hidden" name="day" id="hiddenDay">
+      <input type="hidden" name="tasks" id="hiddenTasks">
+      <button type="submit" class="send-btn" id="submitBtn">✅ Submit To Gmail</button>
+    </form>
+    
+    <!-- Link to Progress -->
+    <div class="link-btn" onclick="showProgress()">📊 View 30-Day Progress</div>
+  </div>
+
+  <!-- Progress Page -->
+  <div class="container" id="progressPage" style="display:none;">
+    <h1>📊 30-Day Challenge Progress</h1>
+    <div class="table-container">
+      <table class="progress-table" id="progressTable">
+        <thead>
+          <tr>
+            <th style="width: 200px;">Task</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+            <th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+            <th>16</th><th>17</th><th>18</th><th>19</th><th>20</th>
+            <th>21</th><th>22</th><th>23</th><th>24</th><th>25</th>
+            <th>26</th><th>27</th><th>28</th><th>29</th><th>30</th>
+          </tr>
+        </thead>
+        <tbody id="progressTableBody">
+        </tbody>
+      </table>
+    </div>
+    <div class="link-btn" onclick="showTodo()">⬅ Back to To-Do</div>
+  </div>
+
+  <script>
+    // Task list for consistent ordering
+    const TASK_LIST = [
+      { name: "Wake up before 5 am", category: "morning" },
+      { name: "Drink ginger, lemon, and honey water", category: "morning" },
+      { name: "Tratak/Prayer", category: "morning" },
+      { name: "Singing", category: "morning" },
+      { name: "Breathing exercise", category: "morning" },
+      { name: "Meditation", category: "morning" },
+      { name: "Start following to-do list", category: "morning" },
+      { name: "Eating before 7 pm", category: "evening" },
+      { name: "Present stage empowerment", category: "evening" },
+      { name: "Future goal empowerment", category: "evening" },
+      { name: "Recalling wasted time & lost opportunities", category: "evening" },
+      { name: "Recalling productive time & achievements", category: "evening" },
+      { name: "What if wasted time was used productively?", category: "evening" },
+      { name: "Recalling whom you hurt today & apologizing in mind", category: "evening" },
+      { name: "Recalling who helped you today & thanking them", category: "evening" },
+      { name: "Reading 2 pages", category: "evening" },
+      { name: "Checking today's to-do & writing tomorrow's", category: "evening" }
+    ];
+
+    // --- Get day number with 30-day limit ---
+    function getDayNumber() {
+      let startDate = localStorage.getItem("startDate");
+      
+      if (!startDate) {
+        // First time - set today as Day 1
+        const today = new Date();
+        startDate = today.toDateString();
+        localStorage.setItem("startDate", startDate);
+      }
+      
+      const firstDay = new Date(startDate);
+      const today = new Date();
+      
+      const diffDays = Math.floor(
+        (today.setHours(0,0,0,0) - firstDay.setHours(0,0,0,0)) /
+        (1000 * 60 * 60 * 24)
+      );
+      
+      return diffDays + 1; // Day 1, Day 2, etc.
+    }
+
+    function updateChallengeStatus() {
+      const currentDay = getDayNumber();
+      const dayLabel = document.getElementById("dayLabel");
+      const challengeStatus = document.getElementById("challengeStatus");
+      const submitBtn = document.getElementById("submitBtn");
+      const tasks = document.querySelectorAll(".task");
+      const nameInput = document.getElementById("userName");
+
+      if (currentDay > 30) {
+        // Challenge completed
+        dayLabel.textContent = "Challenge Complete! 🎉";
+        challengeStatus.innerHTML = `
+          <div class="challenge-complete">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You have completed the 30-day challenge!</p>
+            <p>Check your progress below to see how you did.</p>
+          </div>
+        `;
+        
+        // Disable all inputs
+        tasks.forEach(task => {
+          const checkbox = task.querySelector("input");
+          checkbox.disabled = true;
+        });
+        nameInput.disabled = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Challenge Complete";
+        
+      } else {
+        // Active challenge
+        dayLabel.textContent = `Day ${currentDay} of 30`;
+        challengeStatus.innerHTML = `
+          <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin: 10px 0;">
+            <strong>Days remaining: ${31 - currentDay}</strong>
+          </div>
+        `;
+      }
+
+      return currentDay;
+    }
+
+    const currentDay = updateChallengeStatus();
+    const hiddenDay = document.getElementById("hiddenDay");
+    if (hiddenDay) hiddenDay.value = "Day " + currentDay;
+
+    // --- Restore today's state (only if challenge is active) ---
+    if (currentDay <= 30) {
+      const checkboxes = document.querySelectorAll(".task input");
+      let allData = JSON.parse(localStorage.getItem("challengeData")) || {};
+      let todayData = allData["Day " + currentDay];
+
+      if (todayData) {
+        todayData.tasks.forEach(savedTask => {
+          checkboxes.forEach(cb => {
+            const taskText = cb.parentElement.textContent.trim();
+            if (taskText === savedTask.task) {
+              cb.checked = savedTask.done;
+              if (savedTask.done) cb.disabled = true;
+            }
+          });
+        });
+      }
+
+      checkboxes.forEach(cb => {
+        cb.addEventListener("change", function() {
+          if (this.checked) {
+            this.disabled = true;
+          }
+        });
+      });
+    }
+
+    // --- Handle submit ---
+    const form = document.getElementById("todoForm");
+    const hiddenName = document.getElementById("hiddenName");
+    const hiddenTasks = document.getElementById("hiddenTasks");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      
+      if (currentDay > 30) {
+        alert("The 30-day challenge has been completed!");
+        return;
+      }
+      
+      const name = document.getElementById("userName").value.trim();
+      if (!name) {
+        alert("Please enter your name before submitting.");
+        return;
+      }
+
+      hiddenName.value = name;
+      hiddenDay.value = "Day " + currentDay;
+
+      let results = [];
+      document.querySelectorAll(".task").forEach(task => {
+        const checkbox = task.querySelector("input");
+        const text = task.textContent.trim();
+        const category = task.getAttribute("data-category");
+        results.push({ 
+          task: text, 
+          done: checkbox.checked, 
+          category: category 
+        });
+      });
+
+      let allData = JSON.parse(localStorage.getItem("challengeData")) || {};
+      allData["Day " + currentDay] = { name: name, tasks: results };
+      localStorage.setItem("challengeData", JSON.stringify(allData));
+
+      hiddenTasks.value = results
+        .map(r => `${r.task}: ${r.done ? "✔ Done" : "❌ Not Done"}`)
+        .join("\n");
+
+      fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(() => {
+        showProgress();
+      }).catch(() => {
+        alert("Something went wrong while submitting.");
+      });
+    });
+
+    function showProgress() {
+      document.getElementById("todoPage").style.display = "none";
+      document.getElementById("progressPage").style.display = "block";
+      buildProgressTable();
+    }
+
+    function showTodo() {
+      document.getElementById("progressPage").style.display = "none";
+      document.getElementById("todoPage").style.display = "block";
+    }
+
+    function buildProgressTable() {
+      const allData = JSON.parse(localStorage.getItem("challengeData")) || {};
+      const tbody = document.getElementById("progressTableBody");
+      tbody.innerHTML = "";
+
+      // Add Morning header
+      const morningHeaderRow = document.createElement("tr");
+      morningHeaderRow.innerHTML = `<td colspan="31" class="category-header">🌅 MORNING CHALLENGES</td>`;
+      tbody.appendChild(morningHeaderRow);
+
+      // Add morning tasks
+      TASK_LIST.filter(task => task.category === "morning").forEach(task => {
+        const row = document.createElement("tr");
+        let rowHTML = `<td class="task-name">${task.name}</td>`;
+        
+        for (let day = 1; day <= 30; day++) {
+          const dayData = allData["Day " + day];
+          let completed = false;
+          
+          if (dayData && dayData.tasks) {
+            const taskData = dayData.tasks.find(t => t.task === task.name);
+            completed = taskData ? taskData.done : false;
+          }
+          
+          rowHTML += `<td>${completed ? '<span class="star">★</span>' : '<span class="no-star">☆</span>'}</td>`;
+        }
+        
+        row.innerHTML = rowHTML;
+        tbody.appendChild(row);
+      });
+
+      // Add Evening header
+      const eveningHeaderRow = document.createElement("tr");
+      eveningHeaderRow.innerHTML = `<td colspan="31" class="category-header">🌙 EVENING CHALLENGES</td>`;
+      tbody.appendChild(eveningHeaderRow);
+
+      // Add evening tasks
+      TASK_LIST.filter(task => task.category === "evening").forEach(task => {
+        const row = document.createElement("tr");
+        let rowHTML = `<td class="task-name">${task.name}</td>`;
+        
+        for (let day = 1; day <= 30; day++) {
+          const dayData = allData["Day " + day];
+          let completed = false;
+          
+          if (dayData && dayData.tasks) {
+            const taskData = dayData.tasks.find(t => t.task === task.name);
+            completed = taskData ? taskData.done : false;
+          }
+          
+          rowHTML += `<td>${completed ? '<span class="star">★</span>' : '<span class="no-star">☆</span>'}</td>`;
+        }
+        
+        row.innerHTML = rowHTML;
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
