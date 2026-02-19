@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Hub</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #0f172a;
+      --accent: #22d3ee;
+      --text: #e2e8f0;
+      --ok: #22c55e;
+      --warn: #f97316;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #1d4ed8, #020617 70%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .wrap {
+      width: min(980px, 100%);
+      background: rgba(2, 6, 23, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0.85;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-size: 0.95rem;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      background: var(--accent);
+      color: #082f49;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .output {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #0b1220;
+      border: 1px solid rgba(34, 211, 238, 0.35);
+      min-height: 48px;
+      white-space: pre-wrap;
+      font-weight: 700;
+    }
+
+    .ok {
+      color: var(--ok);
+    }
+
+    .warn {
+      color: var(--warn);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>🧠 Math Hub</h1>
+    <p class="subtitle">Now with clearly visible output panels under every section.</p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Quick Calculator</h2>
+        <label for="a">First number</label>
+        <input id="a" type="number" value="12" />
+
+        <label for="op">Operation</label>
+        <select id="op">
+          <option value="+">Addition (+)</option>
+          <option value="-">Subtraction (-)</option>
+          <option value="*">Multiplication (×)</option>
+          <option value="/">Division (÷)</option>
+        </select>
+
+        <label for="b">Second number</label>
+        <input id="b" type="number" value="3" />
+        <button id="calcBtn" type="button">Calculate</button>
+
+        <div id="calcResult" class="output">Result: 15</div>
+      </section>
+
+      <section class="card">
+        <h2>Random Practice Question</h2>
+        <div id="question" class="output">Loading question...</div>
+        <input id="answer" type="number" placeholder="Type your answer" />
+        <button id="checkBtn" type="button">Check answer</button>
+        <button id="newBtn" type="button">New question</button>
+        <div id="feedback" class="output">Feedback will appear here.</div>
+      </section>
+
+      <section class="card">
+        <h2>Times Table Generator</h2>
+        <label for="tableNum">Enter a number</label>
+        <input id="tableNum" type="number" value="7" />
+        <button id="tableBtn" type="button">Generate table</button>
+        <div id="tableOut" class="output"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const a = document.getElementById('a');
+    const b = document.getElementById('b');
+    const op = document.getElementById('op');
+    const calcBtn = document.getElementById('calcBtn');
+    const calcResult = document.getElementById('calcResult');
+
+    function calculate() {
+      const x = Number(a.value);
+      const y = Number(b.value);
+      let out;
+
+      if (op.value === '+') out = x + y;
+      if (op.value === '-') out = x - y;
+      if (op.value === '*') out = x * y;
+      if (op.value === '/') out = y === 0 ? 'Cannot divide by zero' : x / y;
+
+      calcResult.textContent = `Result: ${out}`;
+      calcResult.classList.toggle('warn', out === 'Cannot divide by zero');
+    }
+
+    calcBtn.addEventListener('click', calculate);
+    a.addEventListener('input', calculate);
+    b.addEventListener('input', calculate);
+    op.addEventListener('change', calculate);
+
+    const questionEl = document.getElementById('question');
+    const answerEl = document.getElementById('answer');
+    const feedbackEl = document.getElementById('feedback');
+    const checkBtn = document.getElementById('checkBtn');
+    const newBtn = document.getElementById('newBtn');
+
+    let currentAnswer = 0;
+
+    function newQuestion() {
+      const x = Math.floor(Math.random() * 12) + 1;
+      const y = Math.floor(Math.random() * 12) + 1;
+      const ops = ['+', '-', '*'];
+      const choice = ops[Math.floor(Math.random() * ops.length)];
+
+      if (choice === '+') currentAnswer = x + y;
+      if (choice === '-') currentAnswer = x - y;
+      if (choice === '*') currentAnswer = x * y;
+
+      questionEl.textContent = `What is ${x} ${choice} ${y}?`;
+      answerEl.value = '';
+      feedbackEl.textContent = 'Feedback will appear here.';
+      feedbackEl.classList.remove('ok', 'warn');
+    }
+
+    function checkAnswer() {
+      const user = Number(answerEl.value);
+      if (user === currentAnswer) {
+        feedbackEl.textContent = 'Correct! Great job 🎉';
+        feedbackEl.classList.add('ok');
+        feedbackEl.classList.remove('warn');
+      } else {
+        feedbackEl.textContent = `Not quite. Correct answer: ${currentAnswer}`;
+        feedbackEl.classList.add('warn');
+        feedbackEl.classList.remove('ok');
+      }
+    }
+
+    checkBtn.addEventListener('click', checkAnswer);
+    newBtn.addEventListener('click', newQuestion);
+    answerEl.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+
+    const tableNum = document.getElementById('tableNum');
+    const tableBtn = document.getElementById('tableBtn');
+    const tableOut = document.getElementById('tableOut');
+
+    function generateTable() {
+      const n = Number(tableNum.value);
+      const lines = [];
+      for (let i = 1; i <= 12; i += 1) {
+        lines.push(`${n} × ${i} = ${n * i}`);
+      }
+      tableOut.textContent = lines.join('\n');
+    }
+
+    tableBtn.addEventListener('click', generateTable);
+    tableNum.addEventListener('input', generateTable);
+
+    calculate();
+    newQuestion();
+    generateTable();
+  </script>
+</body>
+</html>
